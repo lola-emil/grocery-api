@@ -53,7 +53,7 @@ Description: To authenticate user
 
 #### SQL Code
 ```
-    SELECT INTO tbl_users
+    SELECT user_id FROM tbl_users
     WHERE email = "<email>"
     AND password = "<password>"
 ```
@@ -132,42 +132,28 @@ VALUES ("<grocery-title>", "<grocery-description>", "<user-id>")
 ---
 ### Endpoint: GET /groceries/:grocery_id
 
-Description: Get a specific grocery with its items from the database.
-The grocery_id is passed in as a parameter to identify which item should be retrieved.
-
+Description: Get a specific grocery from the database.
 
 #### Headers
 ```
 Authorization: Bearer <your-access-token>
 ```
 
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: to identify which grocery should be retrieved.
+
 #### Response
 ```
     {
         "status": 200,
-        "message": "",
+        "message": "OK",
         "data": {
                 "grocery_id": "<grocery-id>",
                 "title": "<grocery-title>",
                 "description": "<grocery-descrition",
-                "created_at: "<date-created>",
-                "items": [
-                    {
-                        "item_id": "<item-id>",
-                        "name": "<item-name>",
-                        "qty": <item-quantity>,
-                        "price": <item-price>,
-                        "created_at": <date-when-item-created>
-                    },
-                    {
-                        "item_id": "<item-id>",
-                        "name": "<item-name>",
-                        "qty": <item-quantity>,
-                        "price": <item-price>,
-                        "created_at": <date-when-item-created>
-                    },
-                    ...
-                ]
+                "created_at: "<date-created>"
             }
 
     }
@@ -175,11 +161,8 @@ Authorization: Bearer <your-access-token>
 ```
 #### SQL Code
 ```
-SELECT title, description, created_at FROM tbl_groceries 
+SELECT grocery_id, title, description, created_at FROM tbl_groceries 
 WHERE grocery_id = <grocery_id>;
-
-SELECT name, qty, price, created_at FROM tbl_grocery_item
-WHERE item_id = <grocery_id>;
 ```
 ---
 
@@ -187,7 +170,6 @@ WHERE item_id = <grocery_id>;
 ### Endpoint: PATCH /groceries/:grocery_id
 
 Description: Update a specific grocery from the database.
-The grocery_id is passed in as a parameter to identify which item should be updated.
 
 #### Payload
 ```
@@ -196,6 +178,12 @@ The grocery_id is passed in as a parameter to identify which item should be upda
     "description": "<grocery-description>"
 }
 ```
+
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: to identify which item should be updated.
+
 
 #### Headers
 ```
@@ -208,7 +196,7 @@ Authorization: Bearer <your-access-token>
     "status": 200,
     "message": "Update successful",
     "data": {
-        grocery_id: "<id>"
+        "grocery_id": "<id>"
     }
 }
 ```
@@ -248,21 +236,20 @@ DELETE FROM tbl_groceries WHERE grocery_id = <id>
 ```
 ___
 
-### Endpoint: GET /grocery_items
+### Endpoint: GET /groceries/:grocery_id/items
 Description: Retrieves only the items from a specific grocery from the database.
-
-
-#### Queries
-- ?grocery_id=: a query to identify which grocery should be retrieved.
-
 
 #### Headers
 ```
 Authorization: Bearer <your-access-token>
 ```
 
-#### Response
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: To identify which grocery items should be retrieved.
 
+#### Response
 ```
     {
         "status": 200,
@@ -290,18 +277,26 @@ Authorization: Bearer <your-access-token>
 
 #### SQL Code
 ```
-SELECT name, qty, price, created_at FROM tbl_grocery_item
-WHERE item_id = <grocery_id>;
+SELECT item_id, name, qty, price, created_at FROM tbl_grocery_item
+WHERE grocery_id = <grocery_id>;
 ```
 ---
-### Endpoint: GET /grocery_items/:item_id
+### Endpoint: GET /groceries/:grocery_id/items/:item_id
 
-Description: To retrieve a specific grocery item from the database. The item_id is passed in as a parameter to identify which item should be retrieved.
+Description: To retrieve a specific grocery item from the database.
 
 #### Headers
 ```
 Authorization: Bearer <your-access-token>
 ```
+
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: To identify which grocery we get the item from.
+- item_id
+    - Data type: string
+    - Description: To identify which item should be retrieved
 
 #### Response
 ```
@@ -316,11 +311,17 @@ Authorization: Bearer <your-access-token>
         "created_at": <date-when-item-created>
     },
 }
+```
 
+#### SQL Code
+```
+SELECT item_id, name, qty, price, created_at FROM tbl_grocery_items
+WHERE grocery_id = "<grocery_id>" AND item_id = "<item_id>"
 ```
 
 ---
 ### Endpoint: POST /groceries/:grocery_id/items
+
 Description: To create new grocery item. The grocery_id is passed in as a parameter to identify which grocery should the item be inserted.
 
 #### Payload
@@ -332,10 +333,16 @@ Description: To create new grocery item. The grocery_id is passed in as a parame
 }
 ```
 
+
 #### Headers
 ```
 Authorization: Bearer <your-access-token>
 ```
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: to identify which grocery should the item be inserted.
+
 
 #### Response
 ```
@@ -347,11 +354,17 @@ Authorization: Bearer <your-access-token>
     } 
 }
 ```
+
+#### SQL Code
+```
+INSERT INTO tbl_grocery_items (name, qty, price, grocery_id)
+VALUES ("<item-name>", "<item-quantity>", "<item-price>", "<grocery_id>")
+```
 ---
 
 
-### Endpoint: PATCH /grocery_items/:item_id
-Description: Updates a specific grocery item from the database. The item_id is passed in as a parameter to identify which item should be updated.
+### Endpoint: PATCH /groceries/:grocery_id/items/:item_id
+Description: Updates a specific grocery item from the database.
 
 #### Payload
 ```
@@ -366,6 +379,15 @@ Description: Updates a specific grocery item from the database. The item_id is p
 ```
 Authorization: Bearer <your-access-token>
 ```
+
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: To identify where the grocery item is from
+- item_id
+    - Data type: string
+    - Description: To identify which grocery item should be updated
+
 
 #### Response
 ```
@@ -382,11 +404,11 @@ Authorization: Bearer <your-access-token>
 ```
 UPDATE tbl_grocery_items 
 SET name = "<item-name>", qty = "<item-quantity>", price = "<item-price>"
-WHERE item_id = "<item_id>"
+WHERE grocery_id = "<grocery_id>" AND item_id = "<item_id>"
 ```
 
 ---
-### Endpoint: DELETE /grocery_items/:item_id
+### Endpoint: DELETE /groceries/:grocery_id/items/:item_id
 
 Description: Deletes a specific grocery item from the database. The item_id is passed in as a parameter to identify which item should be deleted.
 
@@ -396,6 +418,15 @@ Description: Deletes a specific grocery item from the database. The item_id is p
 Authorization: Bearer <your-access-token>
 ```
 
+#### Params
+- grocery_id
+    - Data type: string
+    - Description: To identify where the grocery item is from
+- item_id
+    - Data type: string
+    - Description: To identify which grocery item should be deleted
+
+
 #### Response
 ```
 {
@@ -403,4 +434,11 @@ Authorization: Bearer <your-access-token>
     "message": "Deleted",
     "data": null
 }
+```
+
+#### SQL Code
+```
+DELETE tbl_grocery_items 
+WHERE grocery_id = "<grocery_id>" 
+AND item_id = "<item_id>"
 ```
