@@ -6,6 +6,6 @@ export const db = knex({
         host: "localhost",
         port: 3306,
         user: "root",
-        db: "grocery_db"
+        database: "grocery_db",
     }
 });

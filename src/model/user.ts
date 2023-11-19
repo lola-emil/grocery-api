@@ -1,5 +1,6 @@
 import { db } from "../db";
 import { v4 as uuidv4 } from "uuid";
+import { encryptPassword } from "../utils/encryptPassword";
 
 export interface User {
     user_id: string;
@@ -19,10 +20,20 @@ export async function findById(id: string) {
     return result;
 }
 
-
+/**
+ * 
+ * @param user - user data to be inserted
+ * @returns returns the user_id of the new inserted user
+ */
 export async function insert(user: User) {
+    // Generate uuid for the primary key
     user.user_id = uuidv4();
- 
+    
+    // Encrypt password
+    user.password = await encryptPassword(user.password);
+
+    // insert
     const result = await db<User>("tbl_users").insert(user);
+    
     return result[0] == 1 ? user.user_id : null;
 }
