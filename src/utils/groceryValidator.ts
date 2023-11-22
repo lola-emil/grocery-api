@@ -28,7 +28,7 @@ const groceryItemSchema = Joi.object({
 export async function groceryValidator(grocery: Grocery) {
     const { error } = grocerySchema.validate(grocery);
 
-    if (error) return error;
+    if (error) return error.message;
 
     const matchedUser = await userModel.findById(grocery.user_id);
 
@@ -41,6 +41,6 @@ export async function groceryValidator(grocery: Grocery) {
 
 export async function groceryItemValidator(item: GroceryItem) {
     const { error } = groceryItemSchema.validate(item);
-    if (error) return error;
+    if (error) return error.message;
     return null;
 }

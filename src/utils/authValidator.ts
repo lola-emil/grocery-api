@@ -19,7 +19,7 @@ export async function registrationValidator(user: User): Promise<Joi.ValidationE
     const { error } = schema.validate(user);
     // Check if error is present from the validator
     if (error)
-        return error;
+        return error.message;
 
     // Check if email is already taken
     const matchedUser = await userModel.findByEmail(user.email);
@@ -35,7 +35,7 @@ export async function loginValidator(user: User): Promise<Joi.ValidationError | 
 
     // Check if error is present from the validator
     if (error)
-        return error;
+        return error.message;
 
     // Check if user is already registered
     const matchedUser = await userModel.findByEmail(user.email);

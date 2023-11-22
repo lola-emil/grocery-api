@@ -12,9 +12,8 @@ export interface Grocery {
 
 export async function insert(grocery: Grocery) {
     grocery.grocery_id = uuidv4();
-    const result = await db("tbl_groceries").insert(grocery);
-
-    return result[0] == 1 ? grocery.grocery_id : null;
+    await db<Grocery>("tbl_groceries").insert(grocery);
+    return grocery.grocery_id;
 }
 
 export async function findbyUserId(userId: string) {

@@ -28,12 +28,12 @@ export async function findById(id: string) {
 export async function insert(user: User) {
     // Generate uuid for the primary key
     user.user_id = uuidv4();
-    
+
     // Encrypt password
     user.password = await encryptPassword(user.password);
 
     // insert
-    const result = await db<User>("tbl_users").insert(user);
-    
-    return result[0] == 1 ? user.user_id : null;
+    await db<User>("tbl_users").insert(user);
+
+    return user.user_id;
 }
