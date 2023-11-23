@@ -16,11 +16,17 @@ export async function insert(item: GroceryItem) {
     item.item_id = uuidv4();
 
     const result = await db<GroceryItem>("tbl_grocery_items").insert(item);
-    return result[0] == 1 ? item.item_id : null;
+    return item.item_id;
 }
 
 export async function findByGroceryId(groceryId: string) {
-    const result = await db<GroceryItem>("tbl_grocery_item").select().where("grocery_id", groceryId);
+    const result = await db<GroceryItem>("tbl_grocery_items").select([
+        "item_id",
+        "name",
+        "qty",
+        "price",
+        "created_at"
+    ]).where("grocery_id", groceryId);
     return result;
 }
 

@@ -9,8 +9,8 @@ router.post("/login", async (req, res) => {
     const error = await loginValidator(body);
 
     // Check if error is present from the validator
-    if (error) return res.status(400).json({
-        status: 400,
+    if (error) return res.status(401).json({
+        status: 401,
         message: error
     });
 

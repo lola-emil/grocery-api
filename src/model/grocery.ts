@@ -17,11 +17,17 @@ export async function insert(grocery: Grocery) {
 }
 
 export async function findbyUserId(userId: string) {
-    const result = await db<Grocery>("tbl_groceries").select().where("user_id", userId);
+    const result = await db<Grocery>("tbl_groceries").select([
+        "grocery_id",
+        "title",
+        "description",
+        "created_at"
+    ]).where("user_id", userId);
     return result;
 }
 
 export async function deleteById(groceryId: string) {
+    await db("tbl_grocery_items").delete().where("grocery_id", groceryId);
     const result = await db<Grocery>("tbl_groceries").delete().where("grocery_id", groceryId);
     return result;
 }

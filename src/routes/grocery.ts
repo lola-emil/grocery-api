@@ -97,12 +97,18 @@ router.patch("/grocery_item/:itemId", async (req, res) => {
     const itemId = req.params.itemId;
     const body = req.body as groceryItemModel.GroceryItem;
 
+    if (!body.name && !body.price && !body.qty)
+        return res.status(400).json({
+            status: 400,
+            message: "'name', 'price' or 'qty' is required"
+        });
+
     await groceryItemModel.updateById(itemId, body);
 
     return res.status(200).json({
         status: 200,
         message: "Updated successfully"
-    })
+    });
 });
 
 router.delete("/grocery_item/:itemId", async (req, res) => {
